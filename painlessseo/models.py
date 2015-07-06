@@ -36,16 +36,19 @@ class SeoMetadata(models.Model):
 
 def update_seo(sender, instance, **kwargs):
     active_lang = get_language()
+    if hasattr(instance, 'get_current_language') and callable(instance.get_current_language):
+        active_lang = instance.get_current_language()
     for lang_code, lang_name in settings.SEO_LANGUAGES:
-        activate(lang_code)
-        try:
-            sm = SeoMetadata.objects.get(content_type=ContentType.objects.get_for_model(instance),
-                                         object_id=instance.id, lang_code=lang_code)
-            if instance.get_absolute_url() != sm.path:
-                sm.path = instance.get_absolute_url()
-        except SeoMetadata.DoesNotExist:
-            sm = SeoMetadata(lang_code=lang_code, content_object=instance, path=instance.get_absolute_url())
-        sm.save()
+        if active_lang:
+            activate(lang_code)
+            try:
+                sm = SeoMetadata.objects.get(content_type=ContentType.objects.get_for_model(instance),
+                                             object_id=instance.id, lang_code=lang_code)
+                if instance.get_absolute_url() != sm.path:
+                    sm.path = instance.get_absolute_url()
+            except SeoMetadata.DoesNotExist:
+                sm = SeoMetadata(lang_code=lang_code, content_object=instance, path=instance.get_absolute_url())
+            sm.save()
     activate(active_lang)
 
 
