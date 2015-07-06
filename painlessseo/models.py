@@ -39,7 +39,7 @@ def update_seo(sender, instance, **kwargs):
     if hasattr(instance, 'get_current_language') and callable(instance.get_current_language):
         active_lang = instance.get_current_language()
     for lang_code, lang_name in settings.SEO_LANGUAGES:
-        if active_lang:
+        if active_lang == lang_code:
             activate(lang_code)
             try:
                 sm = SeoMetadata.objects.get(content_type=ContentType.objects.get_for_model(instance),
