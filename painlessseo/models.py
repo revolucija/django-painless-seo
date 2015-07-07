@@ -42,7 +42,6 @@ class SeoMetadata(models.Model):
                 old_seo = SeoMetadata.objects.get(pk=self.pk)
                 if old_seo.override_path:
                     self.path = old_seo.path
-                self.override_path = False
             except SeoMetadata.DoesNotExist:
                 pass
         super(SeoMetadata, self).save(*args, **kwargs)

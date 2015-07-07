@@ -23,6 +23,10 @@ class SeoMetadataAdmin(admin.ModelAdmin):
     list_filter = ('lang_code', )
     exclude = ('content_type', 'object_id', 'override_path')
 
+    def get_readonly_fields(self, request, obj):
+        if obj and obj.override_path:
+            return ['path', 'lang_code']
+        return []
 
 admin.site.register(SeoMetadata, SeoMetadataAdmin)
 register_seo_signals()
