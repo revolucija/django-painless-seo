@@ -22,6 +22,7 @@ class SeoMetadata(models.Model):
                                  default=settings.DEFAULT_LANG_CODE)
     title = models.CharField(verbose_name=_('Title'), max_length=68, blank=True)
     description = models.CharField(verbose_name=_('Description'), max_length=155, blank=True)
+    override_path = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = _('SEO metadata')
@@ -32,6 +33,16 @@ class SeoMetadata(models.Model):
 
     def __unicode__(self):
         return "Language: %s | URL: %s" % (self.lang_code, self.path)
+
+    def save(self, *args, **kwargs):
+        if kwargs.pop('override_path', None):
+            self.override_path = True
+        else:
+            old_seo = SeoMetadata.objects.get(pk=self.pk)
+            if old_seo.override_path:
+                self.path = old_seo.path
+            self.override_path = False
+        super(SeoMetadata, self).save(*args, **kwargs)
 
 
 def update_seo(sender, instance, **kwargs):
@@ -48,7 +59,7 @@ def update_seo(sender, instance, **kwargs):
                     sm.path = instance.get_absolute_url()
             except SeoMetadata.DoesNotExist:
                 sm = SeoMetadata(lang_code=lang_code, content_object=instance, path=instance.get_absolute_url())
-            sm.save()
+            sm.save(override_path=True)
     activate(active_lang)
 
 

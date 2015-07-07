@@ -11,7 +11,7 @@ class SeoMetadataInline(generic.GenericStackedInline):
     model = SeoMetadata
     extra = 0
     max_num = 0
-    exclude = ('path', 'lang_code', )
+    exclude = ('path', 'lang_code', 'override_path')
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -21,7 +21,7 @@ class SeoMetadataAdmin(admin.ModelAdmin):
     list_display = ('path', 'lang_code', )
     search_fields = ['path', ]
     list_filter = ('lang_code', )
-    exclude = ('content_type', 'object_id', )
+    exclude = ('content_type', 'object_id', 'override_path')
 
 
 admin.site.register(SeoMetadata, SeoMetadataAdmin)
