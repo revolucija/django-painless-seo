@@ -18,7 +18,7 @@ class SeoMetadataInline(generic.GenericStackedInline):
 
 
 class SeoMetadataAdmin(admin.ModelAdmin):
-    list_display = ('path', 'lang_code', )
+    list_display = ('path', 'lang_code', 'content_type')
     search_fields = ['path', ]
     list_filter = ('lang_code', )
     exclude = ('content_type', 'object_id', 'override_path')
