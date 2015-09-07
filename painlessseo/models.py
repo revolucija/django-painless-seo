@@ -73,8 +73,12 @@ def delete_seo(sender, instance, **kwargs):
 
 def register_seo_signals():
     for app, model in settings.SEO_MODELS:
-        ctype = ContentType.objects.get(app_label=app, model=model)
-        if not hasattr(ctype.model_class(), 'get_absolute_url'):
-            raise ImproperlyConfigured("Needed get_absolute_url method not defined on %s.%s model." % (app, model))
-        models.signals.post_save.connect(update_seo, sender=ctype.model_class(), weak=False)
-        models.signals.pre_delete.connect(delete_seo, sender=ctype.model_class(), weak=False)
+        try:
+            ctype = ContentType.objects.get(app_label=app, model=model)
+            if not hasattr(ctype.model_class(), 'get_absolute_url'):
+                raise ImproperlyConfigured("Needed get_absolute_url method not defined on %s.%s model." % (app, model))
+            models.signals.post_save.connect(update_seo, sender=ctype.model_class(), weak=False)
+            models.signals.pre_delete.connect(delete_seo, sender=ctype.model_class(), weak=False)
+        except:
+            print "Painless SEO exception..."
+            pass
